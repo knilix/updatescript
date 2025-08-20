@@ -2,7 +2,7 @@
 # Maintainer: @knilix
 # Only test - Finale Version
 # For Debian/Ubuntu & Alpine Linux
-# V4.1
+# V4.1.2
 # Startscript: wget -q -P /opt/ https://github.com/knilix/updatescript/archive/refs/heads/main.zip && unzip /opt/main.zip -d /opt/scriptfiles && chmod 700 /opt/scriptfiles/updatescript-main/updates.sh
 # Ausführbefehl (einmalig): cd && cd /opt/scriptfiles/updatescript-main && ./updates.sh
 
