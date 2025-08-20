@@ -21,6 +21,19 @@ mkdir -p /opt/scriptfiles
 
 # Script-Header und Logging-Setup
 echo '#!/bin/bash' | tee /opt/scriptfiles/updatescript.sh >/dev/null
+echo '# Spinner-Funktion für visuelle Rückmeldung' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo 'spinner() {' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '    local pid=$1' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '    local spin="|/-\\\\"' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '    local i=0' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '    printf "\\r%s " "${2:-"Working"}"' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '    while kill -0 $pid 2>/dev/null; do' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '        printf "\\r%s %s" "${2:-"Working"}" "${spin:$((i++%4)):1}"' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '        sleep 0.1' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '    done' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '    printf "\\r\\033[K"' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '}' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
 echo 'LOG_DIR="/opt/scriptfiles/log"' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
 echo 'mkdir -p "$LOG_DIR"' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
 echo 'LOGFILE="$LOG_DIR/update_$(date +%Y-%m).log"' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
@@ -38,14 +51,18 @@ echo '' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
 echo '# Check if running on Alpine, Debian, or Ubuntu' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
 echo 'if command -v apk >/dev/null 2>&1; then' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
 echo '    # Alpine Linux' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
-echo '    apk update >/dev/null 2>&1' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
-echo '    apk upgrade -a >/dev/null 2>&1' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '    apk update >/dev/null 2>&1 &' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '    spinner $! "System-Updates werden durchgefuehrt"' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '    apk upgrade -a >/dev/null 2>&1 &' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '    spinner $! "System-Updates werden durchgefuehrt"' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
 echo '    apk cache clean >/dev/null 2>&1' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
 echo '    echo "$(date '\''+%Y-%m-%d %H:%M:%S'\'') - System Updates beendet (Alpine)" >> "$LOGFILE"' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
 echo 'elif command -v apt-get >/dev/null 2>&1; then' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
 echo '    # Debian/Ubuntu' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
-echo '    apt-get update >/dev/null 2>&1' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
-echo '    apt-get upgrade -y >/dev/null 2>&1' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '    apt-get update >/dev/null 2>&1 &' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '    spinner $! "System-Updates werden durchgefuehrt"' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '    apt-get upgrade -y >/dev/null 2>&1 &' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '    spinner $! "System-Updates werden durchgefuehrt"' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
 echo '    apt-get autoremove -y >/dev/null 2>&1' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
 echo '    apt-get autoclean >/dev/null 2>&1' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
 echo '    echo "$(date '\''+%Y-%m-%d %H:%M:%S'\'') - System Updates beendet (Debian/Ubuntu)" >> "$LOGFILE"' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
@@ -78,12 +95,17 @@ echo '        echo "$(date '\''+%Y-%m-%d %H:%M:%S'\'') - Keine docker-compose.y*
 echo '    else' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
 echo '        for cfg in "${composeConfigs[@]}"; do' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
 echo '            echo "$(date '\''+%Y-%m-%d %H:%M:%S'\'') - Docker-Compose Pull für $cfg durchgefuehrt" >> "$LOGFILE"' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
-echo '            docker compose -f "$cfg" pull >> "$LOGFILE" 2>&1 || echo "$(date '\''+%Y-%m-%d %H:%M:%S'\'') - Fehler beim Pull von $cfg" >> "$LOGFILE"' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
-echo '            docker compose -f "$cfg" up -d >> "$LOGFILE" 2>&1 || echo "$(date '\''+%Y-%m-%d %H:%M:%S'\'') - Fehler beim Up von $cfg" >> "$LOGFILE"' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '            docker compose -f "$cfg" pull >> "$LOGFILE" 2>&1 &' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '            spinner $! "Docker-Compose Pull für $cfg"' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '            docker compose -f "$cfg" up -d >> "$LOGFILE" 2>&1 &' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '            spinner $! "Docker-Compose Up für $cfg"' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '            [ $? -ne 0 ] && echo "$(date '\''+%Y-%m-%d %H:%M:%S'\'') - Fehler beim Pull oder Up von $cfg" >> "$LOGFILE"' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
 echo '        done' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
 echo '    fi' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
 echo '    # Alte Images automatisch löschen' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
-echo '    docker image prune -f >> "$LOGFILE" 2>&1 || echo "$(date '\''+%Y-%m-%d %H:%M:%S'\'') - Fehler beim Bereinigen alter Docker-Images" >> "$LOGFILE"' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '    docker image prune -f >> "$LOGFILE" 2>&1 &' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '    spinner $! "Docker-Images werden bereinigt"' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
+echo '    [ $? -ne 0 ] && echo "$(date '\''+%Y-%m-%d %H:%M:%S'\'') - Fehler beim Bereinigen alter Docker-Images" >> "$LOGFILE"' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
 echo '    echo "$(date '\''+%Y-%m-%d %H:%M:%S'\'') - Docker-Compose-Update abgeschlossen" >> "$LOGFILE"' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
 echo 'elif [ -d "/opt/dockervolumes" ]; then' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
 echo '    echo "$(date '\''+%Y-%m-%d %H:%M:%S'\'') - Docker oder docker compose nicht verfügbar" >> "$LOGFILE"' | tee -a /opt/scriptfiles/updatescript.sh >/dev/null
