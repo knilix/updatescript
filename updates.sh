@@ -3,8 +3,8 @@
 # Only test - Finale Version
 # For Debian/Ubuntu & Alpine Linux
 # V4.0.1
-# Startscript: wget -q -P /opt/ https://github.com/knilix/testareaalpine/archive/refs/heads/main.zip && unzip /opt/main.zip -d /opt/scriptfiles && chmod 700 /opt/scriptfiles/testareaalpine-main/install_updatescript.sh
-# Ausführbefehl (einmalig): cd && cd /opt/scriptfiles/testareaalpine-main && ./install_updatescript.sh
+# Startscript: wget -q -P /opt/ https://github.com/knilix/updatescript/archive/refs/heads/main.zip && unzip /opt/main.zip -d /opt/scriptfiles && chmod 700 /opt/scriptfiles/updatescript-main/updates.sh
+# Ausführbefehl (einmalig): cd && cd /opt/scriptfiles/updatescript-main && ./updates.sh
 
 cd
 
