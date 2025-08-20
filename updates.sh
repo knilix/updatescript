@@ -138,7 +138,7 @@ cd /opt/scriptfiles
 #==============================================================================
 
 # Temporäre Installationsdateien löschen
-rm -r /opt/scriptfiles/testareaalpine-main 2>/dev/null
+rm -r /opt/scriptfiles/updatescript-main 2>/dev/null
 rm /opt/main.zip 2>/dev/null
 
 #==============================================================================
